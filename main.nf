@@ -2,13 +2,13 @@
 
 nextflow.enable.dsl=2
 
-include { PREPROCESS_READS_WORKFLOW } from './workflows/stenglein-lab/preprocess_reads.nf'
+include { PREPROCESS_READS } from './subworkflows/stenglein-lab/preprocess_reads.nf'
 
 //
 // WORKFLOW: Run main analysis pipeline
 //
 workflow MAIN_WORKFLOW {
-  PREPROCESS_READS_WORKFLOW(params.fastq_dir, params.fastq_pattern, params.collapse_duplicate_reads)
+  PREPROCESS_READS(params.fastq_dir, params.fastq_pattern, params.collapse_duplicate_reads)
 }
 
 //
