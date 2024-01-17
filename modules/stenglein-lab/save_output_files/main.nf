@@ -8,7 +8,7 @@ process SAVE_OUTPUT_FILES {
     label 'process_low'
 
     input:
-    path(file_to_save, stageAs: "input/*")
+    path(files_to_save, stageAs: "input/*")
 
     output:
     path("*", includeInputs: true) 
@@ -18,9 +18,19 @@ process SAVE_OUTPUT_FILES {
 
     script:
     def args       = task.ext.args ?: ''
-    def link_name  = file_to_save.fileName.name
-    """
-    # force a hard link with ln -L
-    ln -L $file_to_save $link_name
-    """
+    // def link_name  = file_to_save.fileName.name
+
+	 def complete_command    = ""
+
+    // handle multiple files
+	 // construct a complete command consisting of a ln command for each file
+	 for( file in file_to_save){
+      def link_name  = file.fileName.name
+		// use -L to force a hard link
+		complete_command = ${complete_command} + "ln -L $file $link_name; "
+
+    }
+
+	 // this will be the complete command, as last expression in this process block
+	 command
 }
