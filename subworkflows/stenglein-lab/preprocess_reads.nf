@@ -17,8 +17,8 @@ include { COUNT_FASTQ as COUNT_FASTQ_INITIAL       } from '../../modules/stengle
 include { COUNT_FASTQ as COUNT_FASTQ_POST_TRIM     } from '../../modules/stenglein-lab/count_fastq/main'
 include { COUNT_FASTQ as COUNT_FASTQ_POST_COLLAPSE } from '../../modules/stenglein-lab/count_fastq/main'
 
-include { SAVE_OUTPUT_FILES as SAVE_FASTQ_OUTPUT       } from '../../modules/stenglein-lab/save_output_files/main'
-include { SAVE_OUTPUT_FILES as SAVE_FASTQ_DEDUP_OUTPUT } from '../../modules/stenglein-lab/save_output_files/main'
+include { SAVE_OUTPUT_FILE as SAVE_FASTQ_OUTPUT       } from '../../modules/stenglein-lab/save_output_file/main'
+include { SAVE_OUTPUT_FILE as SAVE_FASTQ_DEDUP_OUTPUT } from '../../modules/stenglein-lab/save_output_file/main'
 
 include { PROCESS_FASTQ_COUNTS        }              from '../../modules/stenglein-lab/process_fastq_counts/main'
 
@@ -64,7 +64,7 @@ workflow PREPROCESS_READS {
   FASTQC_POST_TRIM ( BBMAP_BBDUK.out.reads )
 
   ch_processed_reads = BBMAP_BBDUK.out.reads
-  SAVE_FASTQ_OUTPUT(ch_processed_reads.map{meta, reads -> reads})
+  SAVE_FASTQ_OUTPUT(ch_processed_reads.map{meta, reads -> reads}.flatten())
 
   // optionally collapse duplicates reads 
   if (collapse_duplicates) {
@@ -79,7 +79,7 @@ workflow PREPROCESS_READS {
     ch_fastq_counts = ch_fastq_counts.mix(COUNT_FASTQ_POST_COLLAPSE.out.count_file)
 
     ch_processed_reads = COLLAPSE_DUPLICATE_READS.out.reads
-    SAVE_FASTQ_DEDUP_OUTPUT(ch_processed_reads.map{meta, reads -> reads})
+    SAVE_FASTQ_DEDUP_OUTPUT(ch_processed_reads.map{meta, reads -> reads}.flatten())
   }
 
 
