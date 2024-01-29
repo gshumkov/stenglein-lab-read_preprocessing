@@ -78,7 +78,7 @@ nextflow run main.nf -resume --fastq_dir /path/to/fastq/directory -profile singu
 
 ### Input fastq
 
-Input sequence data is assumed to be Illumina paired-end data in separate read1 and read2 files.  Files can be compressed or not but it would be preferred to leave them as compressed files to save disk space.
+Input sequence data is assumed to be Illumina single-end or paired-end data in separate read1 and read2 files (can be a mix of single and paired end).  Input fastq should  be gzip compressed.
 
 The expected names of the fastq files are defined by the parameter `fastq_pattern`, whose default value is defined in nextflow.config as `*_R[12]_*.fastq*`.  This pattern can be overridden on the nextflow command line using the `--fastq_pattern` parameter.
 
