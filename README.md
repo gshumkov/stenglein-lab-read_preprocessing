@@ -27,8 +27,8 @@ A nextflow workflow / pipeline to perform common NGS read preprocessing.  This c
 
 - Quality assessment of input reads with FASTQC.
 - Trimming of adapter and low quality bases with cutadapt. 
-- A second pass to remove any reads containing kmers matching Illumina adapters using BBDuk made it past cutadapt filtering.
-- Optional [removal](#Optional_deduplication) of duplicate reads or read pairs.
+- A second adapter trimming step using bbduk (in case any adapter sequences made it past cutadapt)
+- Optional [removal](#Optional-deduplication) of duplicate reads or read pairs.
 - Quality assessment of trimmed reads with FASTQC.
 - Counting of reads at each step
 - MultiQC report 
@@ -91,7 +91,7 @@ Adapter sequences to be trimmed off of the 5′ and 3′ ends of reads by cutada
 
 ## Outputs
 
-The main outputs of the pipeline are trimmed fastq files, which will be placed in a directory controlled by the `post_trim_fastqc_dir` parameter.  By default, this directory will be `./results/trimmed_fastq`.  
+The main outputs of the pipeline are trimmed fastq files, which will be placed in a directory controlled by the `--fastq_out_dir` parameter.  By default, this directory will be `./results/trimmed_fastq`.  
 
 ### Optional deduplication
 
@@ -101,7 +101,7 @@ Duplicated reads or read pairs, presumably PCR duplicates, can be removed by set
 nextflow run stenglein-lab/read_preprocessing -profile singularity -resume  --fastq_dir /path/to/fastq/directory 
 ```
 
-In this case, fastq files containing trimmed but not deduplicated reads will be placed in the directory specified by `fastq_out_dir`.  Trimmed and deduplicated fastq will be placed in a directory specified by `fastq_out_dedup_dir`.
+In this case, fastq files containing trimmed but not deduplicated reads will be placed in the directory specified by `--fastq_out_dir`.  Trimmed and deduplicated fastq will be placed in a directory specified by `--fastq_out_dedup_dir`.
 
 
 ## Dependencies
