@@ -100,10 +100,6 @@ workflow MARSHAL_FASTQ {
     COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "post_trimming"] } )
     ch_fastq_counts = ch_fastq_counts.mix(COUNT_FASTQ.out.count_file)
   }
-
-  // count # of reads in each fastq file (or file pair)
-  COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "initial"] } )
-  ch_fastq_counts = ch_fastq_counts.mix(COUNT_FASTQ.out.count_file)
   
  emit: 
   reads           = ch_reads
