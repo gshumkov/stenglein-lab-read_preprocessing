@@ -89,6 +89,7 @@ workflow MARSHAL_FASTQ {
 
   // optionally subsample input files to a certain # of random reads
   // (sampling without replacement)
+  // COULD_DO: could count fastq first and only subsample if #reads > sample size
   if (subsample_size) {
      SEQTK_SAMPLE(ch_reads.map{ meta, reads -> [meta, reads, subsample_size] })
 	  ch_reads = SEQTK_SAMPLE.out.reads
