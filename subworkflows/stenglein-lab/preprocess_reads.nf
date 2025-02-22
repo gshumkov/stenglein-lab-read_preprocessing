@@ -37,7 +37,8 @@ workflow PREPROCESS_READS {
   ch_processed_fastq  = Channel.empty()                                               
 
   // make sure all the fastq are in order
-  MARSHAL_FASTQ(input_fastq_dir, fastq_pattern)
+  def count_fastq = true
+  MARSHAL_FASTQ(input_fastq_dir, fastq_pattern, count_fastq, params.subsample_size)
   ch_reads        = MARSHAL_FASTQ.out.reads
   ch_fastq_counts = ch_fastq_counts.mix(MARSHAL_FASTQ.out.fastq_counts)
   ch_versions     = ch_versions.mix ( MARSHAL_FASTQ.out.versions )      

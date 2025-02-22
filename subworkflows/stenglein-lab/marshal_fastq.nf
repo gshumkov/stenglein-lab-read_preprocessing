@@ -1,6 +1,6 @@
 include { CHECK_FASTQ_COMPRESSED   } from '../../modules/stenglein-lab/check_fastq_compressed/main'
 include { COUNT_FASTQ              } from '../../modules/stenglein-lab/count_fastq/main'
-
+include { SEQTK_SAMPLE             } from '../../modules/nf-core/seqtk/sample/main'
 
 /*
  Create a channel with input fastq, possibly from multiple directories (specified as a comma-separated list)
@@ -19,6 +19,9 @@ workflow MARSHAL_FASTQ {
  take:
  input_fastq_dir        // the path to a directory containing fastq file(s) or a comma-separated list of dirs
  fastq_pattern          // the regex that will be matched to identify fastq
+ count_fastq            // boolean: should we count # of reads in input fastq?
+ subsample_size         // null, or an integer value defining the # of reads to subsample each input fastq to
+                        //       or an fractional value (0-1) defining the fraction of reads to subsample
 
  main:
 
@@ -50,6 +53,9 @@ workflow MARSHAL_FASTQ {
          // reads are just the list of fastq
          def meta        = [:]
 
+         // 
+         // TODO: should document how filenames are stripped to make sample IDs
+         // 
          // this map gets rid of any of the following at the end of sample IDs:
          // .gz
          // .fastq
@@ -80,6 +86,20 @@ workflow MARSHAL_FASTQ {
 
   // double check input is compressed - will error if not
   CHECK_FASTQ_COMPRESSED ( ch_reads ) 
+
+  // optionally subsample input files to a certain # of random reads
+  // (sampling without replacement)
+  if (subsample_size) {
+     SEQTK_SAMPLE(ch_reads.map{ meta, reads -> [meta, reads, subsample_size] })
+	  ch_reads = SEQTK_SAMPLE.out.reads
+	  ch_versions = ch_versions.mix(SEQTK_SAMPLE.out.versions)
+  }
+
+  // count # of reads in each fastq file (or file pair)
+  if (count_fastq) {
+    COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "post_trimming"] } )
+    ch_fastq_counts = ch_fastq_counts.mix(COUNT_FASTQ.out.count_file)
+  }
 
   // count # of reads in each fastq file (or file pair)
   COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "initial"] } )
