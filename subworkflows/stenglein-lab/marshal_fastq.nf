@@ -98,7 +98,7 @@ workflow MARSHAL_FASTQ {
 
   // count # of reads in each fastq file (or file pair)
   if (count_fastq) {
-    COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "post_trimming"] } )
+    COUNT_FASTQ ( ch_reads.map{ meta, reads -> [ meta, reads, "initial"] } )
     ch_fastq_counts = ch_fastq_counts.mix(COUNT_FASTQ.out.count_file)
   }
   

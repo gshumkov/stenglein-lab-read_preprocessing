@@ -23,7 +23,7 @@ process COUNT_FASTQ {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     '''
-    pigz -dcf !{files[0]} | wc -l | awk '{print "!{meta.id}" "\t" "!{count_type}" "\t" $0}' > "!{meta.id}.!{count_type}.count.txt"
+    pigz -dcf !{files[0]} | wc -l | xargs bash -c 'echo $(($0 / 4))' | awk '{print "!{meta.id}" "\t" "!{count_type}" "\t" $0}' > "!{meta.id}.!{count_type}.count.txt"
 
     cat <<-END_VERSIONS > versions.yml
     "!{task.process}":
